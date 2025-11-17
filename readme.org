@@ -1,0 +1,6 @@
+* Scittle
+
+´´´
+# serve static content, start nrepl-server and open websocket for browser repl.
+bb dev
+´´´

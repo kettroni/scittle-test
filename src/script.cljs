@@ -1,28 +1,51 @@
-(require '[reagent.dom :as rdom]
-         '[re-frame.core :as rf])
-
-;; utils
-(defn <s [v] @(rf/subscribe v))
-(defn >e [v] (rf/dispatch v))
+(ns script
+  (:require [counter :as c]
+            [re-frame.core :as rf]
+            [reagent.dom :as rdom]
+            [utils :refer [<s >e]]))
 
 ;; events
-(rf/reg-event-db ::click
- (rf/path [:clicks])
- (fnil inc 0))
+(rf/reg-event-db ::change-content
+                 (rf/path [:content])
+                 (fn [_ [_ content-name]]
+                   content-name))
 
-;; subs
-(rf/reg-sub ::clicks :-> :clicks)
+(rf/reg-sub ::content :-> :content)
 
 ;; components
 (defn app []
-  [:div
-   "Clicks: " (<s [::clicks])
-   [:p [:button
-        {:on-click #(>e [::click])}
-        "Click me!"]]])
+  (let [content (<s [::content])]
+    [:div
+     (when content
+       [:button
+        {:on-click #(>e [::change-content nil])}
+        "<-"])
+     (case content
+       ::counter
+       [c/app]
+
+       [:table
+        [:tr [:td [:button
+                   {:on-click #(>e [::change-content ::counter])}
+                   "Counter"]]]])]))
 
 ;; render
-(rdom/render
- [app]
- (-> js/document
-     (.getElementById "app")))
+(defn render []
+  (rdom/render
+   [app]
+   (-> js/document
+       (.getElementById "app"))))
+
+(render)
+
+(comment
+
+  (>e [::change-content ::counter])
+
+  (>e [::change-content nil])
+
+  (>e [::c/click])
+
+  (<s [::c/clicks])
+
+  )
