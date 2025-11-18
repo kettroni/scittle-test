@@ -1,5 +1,6 @@
 (ns script
-  (:require [counter :as c]
+  (:require [canvas :as canvas]
+            [counter :as counter]
             [re-frame.core :as rf]
             [reagent.dom :as rdom]
             [utils :refer [<s >e]]))
@@ -22,12 +23,19 @@
         "<-"])
      (case content
        ::counter
-       [c/app]
+       [counter/app]
 
-       [:table
-        [:tr [:td [:button
-                   {:on-click #(>e [::change-content ::counter])}
-                   "Counter"]]]])]))
+       ::canvas
+       [canvas/app]
+
+       [:div
+        [:button
+         {:on-click #(>e [::change-content ::counter])}
+         "Counter"]
+        [:button
+         {:on-click #(>e [::change-content ::canvas])}
+         "Canvas"]
+        ])]))
 
 ;; render
 (defn render []
@@ -40,12 +48,16 @@
 
 (comment
 
-  (>e [::change-content ::counter])
-
   (>e [::change-content nil])
 
-  (>e [::c/click])
+  ;; canvas
+  (>e [::change-content ::canvas])
 
-  (<s [::c/clicks])
+  ;; counter
+  (>e [::change-content ::counter])
+
+  (>e [::counter/click])
+
+  (<s [::counter/clicks])
 
   )
