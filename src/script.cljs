@@ -53,11 +53,28 @@
   ;; canvas
   (>e [::change-content ::canvas])
 
+  (>e [::canvas/fill-rect {:x 10
+                           :y 10
+                           :w 20
+                           :h 20
+                           :c "blue"}])
+
+  (let [[canvas _] (canvas/canvas-ctx!)]
+    (for [x (range 0 canvas.width 10)]
+      (>e [::canvas/fill-rect {:x x
+                               :y x
+                               :w (- canvas.width x)
+                               :h (- canvas.height x)
+                               :c (-> ["red" "white" "black"]
+                                      (nth (mod x 3)))}])))
+
+  (>e [::canvas/clear "black"])
+
+  (>e [::canvas/clear])
+
   ;; counter
   (>e [::change-content ::counter])
 
   (>e [::counter/click])
 
-  (<s [::counter/clicks])
-
-  )
+  (<s [::counter/clicks]))
